@@ -3,6 +3,8 @@ package com.github.lioia.ui;
 import com.github.lioia.models.Person;
 import com.github.lioia.persistence.PersistenceLayer;
 import com.github.lioia.utils.PersonTableModel;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.swing.FontIcon;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,15 +26,21 @@ public class ListPage implements Runnable {
         // Center frame
         frame.setLocationRelativeTo(null);
 
+        // Header
+        JToolBar toolBar = new JToolBar();
+        toolBar.setFloatable(false);
+
+        toolBar.add(createAddButton());
+        toolBar.add(createEditButton());
+        toolBar.add(createRemoveButton());
+
         // Table
         table = new JTable(new PersonTableModel(persistence.getAll()));
         table.setFillsViewportHeight(true);
         JScrollPane scrollPane = new JScrollPane(table);
-        frame.add(scrollPane, BorderLayout.CENTER);
 
-        // Row of buttons
-        JPanel buttonsRow = createButtons();
-        frame.add(buttonsRow, BorderLayout.SOUTH);
+        frame.add(toolBar, BorderLayout.NORTH);
+        frame.add(scrollPane, BorderLayout.CENTER);
 
         frame.addWindowListener(new WindowAdapter() {
             @Override
@@ -43,18 +51,44 @@ public class ListPage implements Runnable {
         });
     }
 
-    private JPanel createButtons() {
-        JPanel buttonsRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        // Add button
-        JButton addButton = new JButton("Aggiungi");
-        addButton.addActionListener(_ -> {
+    @Override
+    public void run() {
+        // Build UI
+        frame.pack();
+        // Set frame as visible (by default the frame is not visible)
+        frame.setVisible(true);
+    }
+
+    private JButton createAddButton() {
+        FontIcon icon = FontIcon.of(FontAwesomeSolid.PLUS, 18, Color.GREEN);
+        JButton button = new JButton("Aggiungi", icon);
+        button.addActionListener(_ -> {
             new PersonEditorPage(frame, null, persistence).run();
             ((PersonTableModel) table.getModel()).fireTableDataChanged();
         });
 
-        // Remove button
-        JButton removeButton = new JButton("Elimina");
-        removeButton.addActionListener(_ -> {
+        return button;
+    }
+
+    private JButton createEditButton() {
+        FontIcon icon = FontIcon.of(FontAwesomeSolid.EDIT, 18, Color.ORANGE);
+        JButton button = new JButton("Modifica", icon);
+        button.addActionListener(_ -> {
+            if (table.getSelectedRow() == -1) {
+                JOptionPane.showMessageDialog(frame, "È necessario selezionare una persona");
+                return;
+            }
+            Person selected = persistence.getAll().get(table.getSelectedRow());
+            new PersonEditorPage(frame, selected, persistence).run();
+            ((PersonTableModel) table.getModel()).fireTableDataChanged();
+        });
+        return button;
+    }
+
+    private JButton createRemoveButton() {
+        FontIcon icon = FontIcon.of(FontAwesomeSolid.TRASH, 18, Color.RED);
+        JButton button = new JButton("Elimina", icon);
+        button.addActionListener(_ -> {
             if (table.getSelectedRow() == -1) {
                 JOptionPane.showMessageDialog(frame, "È necessario selezionare una persona");
                 return;
@@ -66,28 +100,6 @@ public class ListPage implements Runnable {
                 ((PersonTableModel) table.getModel()).fireTableDataChanged();
             }
         });
-        // Edit button
-        JButton editButton = new JButton("Modifica");
-        editButton.addActionListener(_ -> {
-            if (table.getSelectedRow() == -1) {
-                JOptionPane.showMessageDialog(frame, "È necessario selezionare una persona");
-                return;
-            }
-            Person selected = persistence.getAll().get(table.getSelectedRow());
-            new PersonEditorPage(frame, selected, persistence).run();
-            ((PersonTableModel) table.getModel()).fireTableDataChanged();
-        });
-        buttonsRow.add(removeButton);
-        buttonsRow.add(editButton);
-        buttonsRow.add(addButton);
-        return buttonsRow;
-    }
-
-    @Override
-    public void run() {
-        // Build UI
-        frame.pack();
-        // Set frame as visible (by default the frame is not visible)
-        frame.setVisible(true);
+        return button;
     }
 }
