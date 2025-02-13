@@ -18,12 +18,8 @@ public class FilePersistence implements PersistenceLayer {
         if (!this.file.exists()) {
             System.out.println("File informazioni.txt does not exist");
         }
-        persons = new ArrayList<>();
-        load();
-    }
 
-    @Override
-    public void load() {
+        persons = new ArrayList<>();
         try {
             Scanner scanner = new Scanner(file);
             int currentLine = 0;
@@ -48,11 +44,6 @@ public class FilePersistence implements PersistenceLayer {
     @Override
     public List<Person> getAll() {
         return persons;
-    }
-
-    @Override
-    public Person getOne(int id) {
-        return persons.stream().filter(person -> person.getId() == id).findFirst().orElse(null);
     }
 
     @Override

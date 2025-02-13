@@ -7,6 +7,7 @@ import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.swing.FontIcon;
 
 import javax.swing.*;
+import java.util.List;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -14,7 +15,7 @@ import java.awt.event.WindowEvent;
 public class ListPage implements Runnable {
     private final JFrame frame;
     private final PersistenceLayer persistence;
-    private final JTable table;
+    private JTable table;
 
     public ListPage(PersistenceLayer persistence) {
         this.persistence = persistence;
@@ -34,8 +35,16 @@ public class ListPage implements Runnable {
         toolBar.add(createEditButton());
         toolBar.add(createRemoveButton());
 
+        List<Person> persons;
         // Table
-        table = new JTable(new PersonTableModel(persistence.getAll()));
+        try {
+            persons = persistence.getAll();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(frame, e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+            frame.dispose();
+            return;
+        }
+        table = new JTable(new PersonTableModel(persistence));
         table.setFillsViewportHeight(true);
         JScrollPane scrollPane = new JScrollPane(table);
 
@@ -74,11 +83,11 @@ public class ListPage implements Runnable {
         FontIcon icon = FontIcon.of(FontAwesomeSolid.EDIT, 18, Color.ORANGE);
         JButton button = new JButton("Modifica", icon);
         button.addActionListener(_ -> {
-            if (table.getSelectedRow() == -1) {
+            Person selected = selectPerson();
+            if (selected == null) {
                 JOptionPane.showMessageDialog(frame, "È necessario selezionare una persona");
                 return;
             }
-            Person selected = persistence.getAll().get(table.getSelectedRow());
             new PersonEditorPage(frame, selected, persistence).run();
             ((PersonTableModel) table.getModel()).fireTableDataChanged();
         });
@@ -89,17 +98,33 @@ public class ListPage implements Runnable {
         FontIcon icon = FontIcon.of(FontAwesomeSolid.TRASH, 18, Color.RED);
         JButton button = new JButton("Elimina", icon);
         button.addActionListener(_ -> {
-            if (table.getSelectedRow() == -1) {
+            Person selected = selectPerson();
+            if (selected == null) {
                 JOptionPane.showMessageDialog(frame, "È necessario selezionare una persona");
                 return;
             }
-            Person selected = persistence.getAll().get(table.getSelectedRow());
             int confirmDialog = JOptionPane.showConfirmDialog(frame, "Eliminare la persona " + selected.getName() + " " + selected.getSurname() + "?");
             if (confirmDialog == JOptionPane.YES_OPTION) {
-                persistence.delete(selected);
+                try {
+                    persistence.delete(selected);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(frame, e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 ((PersonTableModel) table.getModel()).fireTableDataChanged();
             }
         });
         return button;
+    }
+
+    private Person selectPerson() {
+        try {
+            if (table.getSelectedRow() == -1) {
+                return null;
+            }
+            return persistence.getAll().get(table.getSelectedRow());
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

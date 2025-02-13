@@ -1,15 +1,24 @@
 package com.github.lioia.utils;
 
 import com.github.lioia.models.Person;
+import com.github.lioia.persistence.PersistenceLayer;
 
 import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PersonTableModel extends AbstractTableModel {
-    private final List<Person> persons;
+    private final PersistenceLayer persistence;
+    private List<Person> persons;
 
-    public PersonTableModel(List<Person> persons) {
-        this.persons = persons;
+    public PersonTableModel(PersistenceLayer persistence) {
+        this.persistence = persistence;
+        try {
+            this.persons = persistence.getAll();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            this.persons = new ArrayList<>();
+        }
     }
 
     @Override
@@ -41,5 +50,15 @@ public class PersonTableModel extends AbstractTableModel {
             case 2 -> person.getPhone();
             default -> throw new IllegalStateException("Unexpected column index value: " + columnIndex);
         };
+    }
+
+    @Override
+    public void fireTableDataChanged() {
+        try {
+            persons = persistence.getAll();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        super.fireTableDataChanged();
     }
 }

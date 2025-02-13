@@ -1,16 +1,47 @@
 package com.github.lioia;
 
+import com.github.lioia.persistence.DatabasePersistence;
 import com.github.lioia.persistence.FilePersistence;
+import com.github.lioia.persistence.PersistenceLayer;
 import com.github.lioia.ui.ListPage;
 
 import javax.swing.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) {
-        // TODO: create persistence layer
-        //       - if there is no credenziali_database.properties and no schema_database.sql; use FilePersistence
-        //       - otherwise use DatabasePersistence
+        // Create persistence layer
+        PersistenceLayer persistenceLayer;
+        if (Files.exists(Paths.get("credenziali_database.properties"))) {
+            // Using db as persistence
+            try {
+                persistenceLayer = new DatabasePersistence();
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        e.getMessage(),
+                        "Errore nella lettura delle credenziali",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        e.getMessage(),
+                        "Errore nella connessione al database",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+        } else {
+            // There is no credentials for the database; using file-system as persistence (only if informazioni.txt exists)
+            persistenceLayer = new FilePersistence();
+        }
+
         // Let Swing decide when to run the UI
-        SwingUtilities.invokeLater(new ListPage(new FilePersistence()));
+        SwingUtilities.invokeLater(new ListPage(persistenceLayer));
     }
 }

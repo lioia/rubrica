@@ -147,10 +147,20 @@ public class PersonEditorPage implements Runnable {
 
             if (person == null) {
                 // No person was passed; this is a new person to create
-                persistence.add(name, surname, address, phone, age);
+                try {
+                    persistence.add(name, surname, address, phone, age);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
             } else {
                 // There was a previous instance of person; this is an edit
-                persistence.edit(person.getId(), name, surname, address, phone, age);
+                try {
+                    persistence.edit(person.getId(), name, surname, address, phone, age);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
             }
             dialog.dispose();
         });
