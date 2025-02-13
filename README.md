@@ -1,5 +1,11 @@
 # Rubrica
 
+## Building
+
+```shell
+mvn clean package
+```
+
 ## Running
 
 **MySQL Database (using Docker)**:

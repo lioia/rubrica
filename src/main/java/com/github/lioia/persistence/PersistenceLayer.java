@@ -1,14 +1,15 @@
 package com.github.lioia.persistence;
 
 import com.github.lioia.models.Person;
+import com.github.lioia.models.User;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public interface PersistenceLayer {
-    List<Person> getAll() throws Exception;
-    void add(String name, String surname, String address, String phone, int age) throws Exception;
-    void edit(int id, String name, String surname, String address, String phone, int age) throws Exception;
-    void delete(Person person) throws Exception;
+    List<Person> getAllPersons() throws Exception;
+    void addPerson(String name, String surname, String address, String phone, int age) throws Exception;
+    void editPerson(int id, String name, String surname, String address, String phone, int age) throws Exception;
+    void deletePerson(Person person) throws Exception;
+    boolean isUserValid(User user);
     void save();
 }

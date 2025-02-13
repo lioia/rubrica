@@ -14,7 +14,7 @@ public class PersonTableModel extends AbstractTableModel {
     public PersonTableModel(PersistenceLayer persistence) {
         this.persistence = persistence;
         try {
-            this.persons = persistence.getAll();
+            this.persons = persistence.getAllPersons();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             this.persons = new ArrayList<>();
@@ -55,7 +55,7 @@ public class PersonTableModel extends AbstractTableModel {
     @Override
     public void fireTableDataChanged() {
         try {
-            persons = persistence.getAll();
+            persons = persistence.getAllPersons();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

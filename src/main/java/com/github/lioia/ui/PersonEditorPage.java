@@ -31,6 +31,7 @@ public class PersonEditorPage implements Runnable {
         dialog.setLayout(new BorderLayout());
         // Position is relative to the parent window
         dialog.setLocationRelativeTo(parent);
+        dialog.setSize(400, 300);
 
         // Centered Header
         JLabel header = new JLabel("Editor Persona", SwingConstants.CENTER);
@@ -148,7 +149,7 @@ public class PersonEditorPage implements Runnable {
             if (person == null) {
                 // No person was passed; this is a new person to create
                 try {
-                    persistence.add(name, surname, address, phone, age);
+                    persistence.addPerson(name, surname, address, phone, age);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(null, e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
                     return;
@@ -156,7 +157,7 @@ public class PersonEditorPage implements Runnable {
             } else {
                 // There was a previous instance of person; this is an edit
                 try {
-                    persistence.edit(person.getId(), name, surname, address, phone, age);
+                    persistence.editPerson(person.getId(), name, surname, address, phone, age);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(null, e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
                     return;

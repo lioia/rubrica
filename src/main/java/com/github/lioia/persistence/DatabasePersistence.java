@@ -1,6 +1,7 @@
 package com.github.lioia.persistence;
 
 import com.github.lioia.models.Person;
+import com.github.lioia.models.User;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,7 +12,6 @@ import java.util.Properties;
 
 public class DatabasePersistence implements PersistenceLayer {
     private final Connection connection;
-    private List<Person> persons;
 
     public DatabasePersistence() throws IOException, SQLException {
         Properties properties = new Properties();
@@ -29,7 +29,7 @@ public class DatabasePersistence implements PersistenceLayer {
     }
 
     @Override
-    public List<Person> getAll() throws Exception {
+    public List<Person> getAllPersons() throws Exception {
         List<Person> persons = new ArrayList<>();
         String query = "SELECT * FROM person";
         Statement statement = connection.createStatement();
@@ -48,15 +48,15 @@ public class DatabasePersistence implements PersistenceLayer {
     }
 
     @Override
-    public void add(String name, String surname, String address, String phone, int age) throws Exception {
+    public void addPerson(String name, String surname, String address, String phone, int age) throws Exception {
         String query = "INSERT INTO person (name, surname, address, phone, age) VALUES (?, ?, ?, ?, ?)";
-        try(PreparedStatement statement = createStatement(query, name, surname, address, phone, age)) {
+        try (PreparedStatement statement = createStatement(query, name, surname, address, phone, age)) {
             statement.executeUpdate();
         }
     }
 
     @Override
-    public void edit(int id, String name, String surname, String address, String phone, int age) throws Exception {
+    public void editPerson(int id, String name, String surname, String address, String phone, int age) throws Exception {
         String query = "UPDATE person SET name = ?, surname = ?, address = ?, phone = ?, age = ? WHERE id = ?";
         try (PreparedStatement statement = createStatement(query, name, surname, address, phone, age)) {
             statement.setInt(6, id);
@@ -65,11 +65,27 @@ public class DatabasePersistence implements PersistenceLayer {
     }
 
     @Override
-    public void delete(Person person) throws Exception {
+    public void deletePerson(Person person) throws Exception {
         String query = "DELETE FROM person WHERE id = ?";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setInt(1, person.getId());
         statement.executeUpdate();
+    }
+
+    @Override
+    public boolean isUserValid(User user) {
+        String query = "SELECT * FROM user WHERE username = ? AND password = ?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, user.username());
+            statement.setString(2, user.password());
+
+            ResultSet set = statement.executeQuery();
+            return set.next(); // user found
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
 
     @Override

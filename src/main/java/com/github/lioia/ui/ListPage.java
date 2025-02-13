@@ -7,7 +7,6 @@ import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.swing.FontIcon;
 
 import javax.swing.*;
-import java.util.List;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -15,7 +14,7 @@ import java.awt.event.WindowEvent;
 public class ListPage implements Runnable {
     private final JFrame frame;
     private final PersistenceLayer persistence;
-    private JTable table;
+    private final JTable table;
 
     public ListPage(PersistenceLayer persistence) {
         this.persistence = persistence;
@@ -26,6 +25,7 @@ public class ListPage implements Runnable {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // Center frame
         frame.setLocationRelativeTo(null);
+        frame.setSize(800, 600);
 
         // Header
         JToolBar toolBar = new JToolBar();
@@ -35,15 +35,7 @@ public class ListPage implements Runnable {
         toolBar.add(createEditButton());
         toolBar.add(createRemoveButton());
 
-        List<Person> persons;
         // Table
-        try {
-            persons = persistence.getAll();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(frame, e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
-            frame.dispose();
-            return;
-        }
         table = new JTable(new PersonTableModel(persistence));
         table.setFillsViewportHeight(true);
         JScrollPane scrollPane = new JScrollPane(table);
@@ -106,7 +98,7 @@ public class ListPage implements Runnable {
             int confirmDialog = JOptionPane.showConfirmDialog(frame, "Eliminare la persona " + selected.getName() + " " + selected.getSurname() + "?");
             if (confirmDialog == JOptionPane.YES_OPTION) {
                 try {
-                    persistence.delete(selected);
+                    persistence.deletePerson(selected);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(frame, e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
                     return;
@@ -122,7 +114,7 @@ public class ListPage implements Runnable {
             if (table.getSelectedRow() == -1) {
                 return null;
             }
-            return persistence.getAll().get(table.getSelectedRow());
+            return persistence.getAllPersons().get(table.getSelectedRow());
         } catch (Exception e) {
             return null;
         }

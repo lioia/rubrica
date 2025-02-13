@@ -3,7 +3,7 @@ package com.github.lioia;
 import com.github.lioia.persistence.DatabasePersistence;
 import com.github.lioia.persistence.FilePersistence;
 import com.github.lioia.persistence.PersistenceLayer;
-import com.github.lioia.ui.ListPage;
+import com.github.lioia.ui.LoginPage;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -42,6 +42,6 @@ public class Main {
         }
 
         // Let Swing decide when to run the UI
-        SwingUtilities.invokeLater(new ListPage(persistenceLayer));
+        SwingUtilities.invokeLater(new LoginPage(persistenceLayer));
     }
 }
