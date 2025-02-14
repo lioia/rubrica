@@ -16,7 +16,7 @@ docker run --name mysql \
     -e MYSQL_DATABASE=rubrica \
     -e MYSQL_USER=admin \
     -e MYSQL_PASSWORD=password \
-    -v $(pwd)/schema_database.sql:/docker-entrypoint-initdb.d/init.sql \
+    -v "$(pwd)/schema_database.sql:/docker-entrypoint-initdb.d/init.sql" \
     -p 3306:3306 \
     -d mysql
 ```
