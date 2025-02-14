@@ -8,7 +8,11 @@ mvn clean package
 
 ## Running
 
-**MySQL Database (using Docker)**:
+Run: `Rubrica.jar`
+
+### MySQL Database
+
+**Docker** (tested under Linux):
 
 ```shell
 docker run --name mysql \
@@ -21,15 +25,20 @@ docker run --name mysql \
     -d mysql
 ```
 
-**Configure `credenziali_database.properties`**
+Otherwise using MySQL shell (tested under Windows):
 
-**Running**: run `Rubrica.jar`
+- Open MySQL Shell (`mysqlsh.exe`) in the directory containing the `schema_database.sql` file
+- Run: `<mysql-user>@localhost:3306` where `<mysql-user>` is the MySQL User with admin access
+- Run: `\sql` to switch to SQL command mode
+- Run: `\source schema_database.sql` to create the database
+
+**Configure `credenziali_database.properties`** based on the database configuruation
 
 ## Notes
 
 ### Insecure Login
 
-The current implementation expects the password to be saved in plaintext (both inside the file or in the db).
+The current implementation expects the password to be saved in plaintext (inside the file or in the db).
 
 An improvement would require the password to be encrypted using a cryptographic library, like bcrypt.
 
@@ -45,4 +54,3 @@ Running under Wayland requires this command:
 ```shell
 _JAVA_AWT_WM_NONREPARENTING=1 GDK_BACKEND=x11 java -jar Rubrica.jar
 ```
-
