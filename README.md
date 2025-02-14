@@ -23,7 +23,7 @@ docker run --name mysql \
 
 **Configure `credenziali_database.properties`**
 
-**Running**: execute `Rubrica.jar`
+**Running**: run `Rubrica.jar`
 
 ## Notes
 
@@ -31,3 +31,10 @@ When running under Wayland these environment variables have to be set:
 
 - `_JAVA_AWT_WM_NONREPARENTING=1`
 - `GDK_BACKEND=x11`
+
+Running under Wayland requires this command:
+
+```shell
+_JAVA_AWT_WM_NONREPARENTING=1 GDK_BACKEND=x11 java -jar Rubrica.jar
+```
+
