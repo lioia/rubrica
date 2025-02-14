@@ -20,6 +20,7 @@ public class Main {
             try {
                 persistenceLayer = new DatabasePersistence();
             } catch (IOException e) {
+                // Failure when reading credentials
                 JOptionPane.showMessageDialog(
                         null,
                         e.getMessage(),
@@ -28,6 +29,7 @@ public class Main {
                 );
                 return;
             } catch (SQLException e) {
+                // Failure when connecting to db
                 JOptionPane.showMessageDialog(
                         null,
                         e.getMessage(),

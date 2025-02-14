@@ -83,6 +83,7 @@ public class PersonEditorPage implements Runnable {
         phoneField = new JTextField(10);
         phoneField.setText(person == null ? "" : person.getPhone());
 
+        // Using a number formatter to only allow numbers in the text field
         NumberFormatter formatter = new NumberFormatter(NumberFormat.getNumberInstance());
         formatter.setMinimum(0);
         formatter.setMaximum(Integer.MAX_VALUE);
@@ -133,7 +134,8 @@ public class PersonEditorPage implements Runnable {
 
         // Save button
         JButton save = new JButton("Salva");
-        save.addActionListener(_ -> {
+        save.addActionListener(event -> {
+            // Get data from fields
             String name = nameField.getText();
             String surname = surnameField.getText();
             String address = addressField.getText();
@@ -168,8 +170,9 @@ public class PersonEditorPage implements Runnable {
 
         // Close modal dialog
         JButton cancel = new JButton("Annulla");
-        cancel.addActionListener(_ -> dialog.dispose());
+        cancel.addActionListener(e -> dialog.dispose());
 
+        // Add buttons to the row
         buttons.add(cancel);
         buttons.add(save);
 

@@ -64,6 +64,7 @@ public class Person {
         this.age = age;
     }
 
+    // Formatting as required by the file persistence layer
     @Override
     public String toString() {
         return name + ";" + surname + ";" + address + ";" + phone + ";" + age;

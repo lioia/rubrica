@@ -27,6 +27,14 @@ docker run --name mysql \
 
 ## Notes
 
+### Insecure Login
+
+The current implementation expects the password to be saved in plaintext (both inside the file or in the db).
+
+An improvement would require the password to be encrypted using a cryptographic library, like bcrypt.
+
+### Linux Wayland-specific
+
 When running under Wayland these environment variables have to be set:
 
 - `_JAVA_AWT_WM_NONREPARENTING=1`

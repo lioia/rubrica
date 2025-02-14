@@ -54,11 +54,13 @@ public class PersonTableModel extends AbstractTableModel {
 
     @Override
     public void fireTableDataChanged() {
+        // Reload the data
         try {
             persons = persistence.getAllPersons();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        // Call the original implementation
         super.fireTableDataChanged();
     }
 }
